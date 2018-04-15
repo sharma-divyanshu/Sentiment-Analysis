@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     train_words = sequence.pad_sequences(np.array(train_words), maxlen=seq_len)
     test_words = sequence.pad_sequences(np.array(test_words), maxlen=seq_len)
-    y_train_enc = np_utils.to_categorical(sentiment_train, num_labels)
+    y_train = np_utils.to_categorical(sentiment, num_labels)
 
     model = Sequential()
     model.add(Embedding(dictionary_size, 128))
@@ -69,10 +69,13 @@ if __name__ == "__main__":
     model.add(Dense(num_labels))
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(train_words, y_train_enc, epochs=3, batch_size=256, verbose=1)
+    model.fit(train_words, y_train, epochs=3, batch_size=256, verbose=1)
     
+    # input data
+
     sample = pd.read_csv('sample.csv',encoding = "ISO-8859-1")
     sample = sample['Phrase'].values
+
     processed_sample = []
     for doc in sample:
        tokens = word_tokenize(doc)
@@ -82,7 +85,6 @@ if __name__ == "__main__":
 
     dictionary1 = dictionary.add_documents(processed_sample)
     
-    print("converting to token ids...")
     word_id_sample = []
     word_ids = []
     
