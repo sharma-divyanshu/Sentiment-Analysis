@@ -7,6 +7,7 @@ from keras.preprocessing import sequence
 from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Embedding, LSTM
+from keras.models import load_model
 from gensim import corpora
 
 np.random.seed(0)
@@ -43,36 +44,40 @@ if __name__ == "__main__":
     dictionary = corpora.Dictionary(processed_docs)
     dictionary_size = len(dictionary.keys())
     
-    train_words, test_words, words_length, word_ids  = [], [], [], []
-    test_words, word_ids = [], []
-    
-    for doc in processed_train:
-        word_ids = [dictionary.token2id[word] for word in doc]
-        train_words.append(word_ids)
-        words_length.append(len(word_ids))
+#    train_words, test_words, words_length, word_ids  = [], [], [], []
+#    test_words, word_ids = [], []
+#    
+#    for doc in processed_train:
+#        word_ids = [dictionary.token2id[word] for word in doc]
+#        train_words.append(word_ids)
+#        words_length.append(len(word_ids))
+#
+#    for doc in processed_test:
+#        word_ids = [dictionary.token2id[word] for word in doc]
+#        test_words.append(word_ids)
+#        words_length.append(len(word_ids))
+# 
+#    seq_len = np.round((np.mean(words_length) + 2*np.std(words_length))).astype(int)
+#
+#    train_words = sequence.pad_sequences(np.array(train_words), maxlen=seq_len)
+#    test_words = sequence.pad_sequences(np.array(test_words), maxlen=seq_len)
+#    y_train = np_utils.to_categorical(sentiment, num_labels)
 
-    for doc in processed_test:
-        word_ids = [dictionary.token2id[word] for word in doc]
-        test_words.append(word_ids)
-        words_length.append(len(word_ids))
- 
-    seq_len = np.round((np.mean(words_length) + 2*np.std(words_length))).astype(int)
-
-    train_words = sequence.pad_sequences(np.array(train_words), maxlen=seq_len)
-    test_words = sequence.pad_sequences(np.array(test_words), maxlen=seq_len)
-    y_train = np_utils.to_categorical(sentiment, num_labels)
-
-    model = Sequential()
-    model.add(Embedding(dictionary_size, 128))
-    model.add(Dropout(0.2))
-    model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
-    model.add(Dense(num_labels))
-    model.add(Activation('softmax'))
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(train_words, y_train, epochs=3, batch_size=256, verbose=1)
+#    model = Sequential()
+#    model.add(Embedding(dictionary_size, 128))
+#    model.add(Dropout(0.2))
+#    model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+#    model.add(Dense(num_labels))
+#    model.add(Activation('softmax'))
+#    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+#    model.fit(train_words, y_train, epochs=3, batch_size=256, verbose=1)
+#    
+#    model.save("model.h5")
     
     # input data
 
+    model = load_model("model.h5")
+    
     sample = pd.read_csv('sample.csv',encoding = "ISO-8859-1")
     sample = sample['Phrase'].values
 
